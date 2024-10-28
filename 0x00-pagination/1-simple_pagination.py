@@ -41,14 +41,13 @@ class Server:
         return self.__dataset
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
-        assert type(page) is int, "page must be an int"
-        assert type(page_size) is int, "page_size must be an int"
-        assert page > 0, "page must be a positive number greater than zero"
-        assert page_size > 0, "page_size must be a positive number"
+        assert type(page) is int and type(page_size) is int
+        assert page > 0 and page_size > 0
 
         start_index, end_index = index_range(page=page, page_size=page_size)
 
-        self.dataset()
+        dataset = self.dataset()
+        if start_index > len(dataset):
+            return []
 
-        results = self.dataset()[start_index:end_index]
-        return results
+        return dataset[start_index:end_index]
