@@ -63,7 +63,7 @@ class Server:
         assert page > 0 and page_size > 0
 
         dataset = self.get_page(page=page, page_size=page_size)
-        total_pages = math.ceil(len(dataset) / page_size)
+        total_pages = math.ceil(len(self.dataset()) / page_size)
 
         result = {
             "page_size": len(dataset),
