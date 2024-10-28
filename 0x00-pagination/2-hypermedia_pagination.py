@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-    Implements simple pagination using index
+    Implementation of Hyper Media Pagination
 """
+from typing import Dict
 import csv
 import math
 from typing import List, Tuple
@@ -53,3 +54,24 @@ class Server:
             return []
 
         return dataset[start_index:end_index]
+
+    def get_hyper(self, page: int, page_size: int) -> Dict:
+        """
+            Hypepagination implementation
+        """
+        assert type(page) is int and type(page_size) is int
+        assert page > 0 and page_size > 0
+
+        dataset = self.get_page(page=page, page_size=page_size)
+        total_pages = math.ceil(len(self.dataset) / page_size)
+
+        result = {
+            "page_size": len(dataset),
+            "page": page,
+            "data": dataset,
+            "next_page": page + 1 if page < total_pages else None,
+            "prev_page": page - 1 if page > 1 else None,
+            "total_pages": total_pages
+        }
+
+        return result
