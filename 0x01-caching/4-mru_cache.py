@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-    LRU Cache Module
+    MRU Cache Module
 """
 from base_caching import BaseCaching
 from collections import OrderedDict
 
 
-class LRUCache(BaseCaching):
+class MRUCache(BaseCaching):
     """
-        Class that implements LRU Caching policy
+        Class that implements MRU Caching policy
     """
     def __init__(self):
         """
@@ -27,7 +27,7 @@ class LRUCache(BaseCaching):
             self.cache_data.pop(key)
 
         elif len(self.cache_data) >= BaseCaching.MAX_ITEMS:
-            old_key, _ = self.cache_data.popitem(last=False)
+            old_key, _ = self.cache_data.popitem(last=True)
             print('DISCARD:', old_key)
 
         self.cache_data[key] = item
