@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-    Different locale based on params or user settings
+    Infer timezone
 """
 from flask import Flask, g, render_template, request
 from flask_babel import Babel, gettext as _
 from typing import Dict
+import pytz
 
 users = {
     1: {"name": "Balou", "locale": "fr", "timezone": "Europe/Paris"},
@@ -48,13 +49,25 @@ def get_locale():
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
+@babel.timezoneselector
+def get_timezone():
+    """Inferes the correct timeozone"""
+    requested_timezone = request.args.get('timezone').strip()
+    if not requested_timezone and g.user:
+        requested_timezone = g.user.get('timezone')
+    try:
+        return pytz.timezone(requested_timezone).zone
+    except pytz.exceptions.UnknownTimeZoneError:
+        return app.config['BABEL_DEFAULT_TIMEZONE']
+
+
 @app.route('/', strict_slashes=False)
 def root():
     """Entry point to the flask app"""
     user = None
     if g.user:
         user = g.user
-    return render_template("6-index.html",
+    return render_template("7-index.html",
                            home_title=_("home_title"),
                            home_header=_("home_header"),
                            user=user)
