@@ -3,7 +3,7 @@
     Setup module for Babel
 """
 from flask import Flask, render_template, request
-from flask_babel import Babel
+from flask_babel import Babel, gettext as _
 
 
 class Config:
@@ -20,14 +20,16 @@ babel = Babel(app)
 
 @babel.localeselector
 def get_locale():
-    """Retrives location from request"""
+    """Retrives best matcg lingo from request"""
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
 @app.route('/', strict_slashes=False)
 def root():
     """Entry point to the flask app"""
-    return render_template("3-index.html")
+    return render_template("3-index.html",
+                           home_title=_("home_title"),
+                           home_header=_("home_header"))
 
 
 if __name__ == '__main__':
