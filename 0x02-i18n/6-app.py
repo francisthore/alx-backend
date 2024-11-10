@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-    Different
+    Different locale based on params or user settings
 """
 from flask import Flask, g, render_template, request
 from flask_babel import Babel, gettext as _
@@ -39,6 +39,9 @@ def get_locale():
     requested_locale = request.args.get("locale")
     if requested_locale in app.config['LANGUAGES']:
         return requested_locale
+
+    if g.get('user') and g.user.get('locale') in app.config['LANGUAGES']:
+        return g.user.get('locale')
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
