@@ -69,9 +69,16 @@ def root():
     if g.user:
         user = g.user
 
-    return render_template("7-index.html",
+    current_timezone = get_timezone()
+    current_time = datetime.now(pytz.timezone(current_timezone))
+
+    formatted_time = format_datetime(current_time)
+
+    return render_template("index.html",
                            home_title=_("home_title"),
                            home_header=_("home_header"),
+                           c_time=_("current_time_is",
+                                    current_time=formatted_time),
                            user=user)
 
 
