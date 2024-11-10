@@ -19,7 +19,7 @@ babel = Babel(app)
 
 
 @babel.localeselector
-def get_locale():
+def get_locale() -> str:
     """Retrives best matcg lingo from request"""
     requested_locale = request.args.get("locale")
     if requested_locale in app.config['LANGUAGES']:
@@ -28,7 +28,7 @@ def get_locale():
 
 
 @app.route('/', strict_slashes=False)
-def root():
+def root() -> str:
     """Entry point to the flask app"""
     return render_template("4-index.html",
                            home_title=_("home_title"),
