@@ -1,49 +1,67 @@
 #!/usr/bin/env python3
-"""
-    MRU Cache Module
-"""
+""" LFU Caching System Module """
+
 from base_caching import BaseCaching
-from collections import OrderedDict
 
 
-class MRUCache(BaseCaching):
+class LFUCache(BaseCaching):
+    """ Implements LFU (Least Frequently Used) Cache System
     """
-        Class that implements MRU Caching policy
-    """
+
     def __init__(self):
-        """
-            Initializes the cache dictionary
-        """
+        """ Initialize the LFU cache system """
         super().__init__()
-        self.cache_data = OrderedDict()
-        self.access_frequency = {}
+        self.usage_frequency = {}
+        self.access_order = {}
 
     def put(self, key, item):
         """
-            Adds an item to the cache dictionary
+        Add an item to the cache, using LFU and
+        LRU policies for eviction if needed.
         """
         if key is None or item is None:
             return
+
         if key in self.cache_data:
-            self.cache_data.pop(key)
-            self.access_frequency[key] += 1
-
+            self.cache_data[key] = item
         else:
-            if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
-                min_access = min(self.access_frequency.value())
-                data_keys = [k for k,
-                             accessed in self.access_frequency.items()
-                             if accessed == min_access]
-                
+            if len(self.cache_data) >= self.MAX_ITEMS:
+                min_frequency = min(self.usage_frequency.values())
+                least_frequent_keys = [k for k,
+                                       freq in self.usage_frequency.items()
+                                       if freq == min_frequency]
 
-        self.cache_data[key] = item
+                if len(least_frequent_keys) > 1:
+                    lru_key = min(least_frequent_keys,
+                                  key=lambda k: self.access_order[k])
+                    self._evict(lru_key)
+                else:
+                    self._evict(least_frequent_keys[0])
+
+            self.cache_data[key] = item
+            self.usage_frequency[key] = 1
+            self.access_order[key] = len(self.access_order)
+
+        self.usage_frequency[key] += 1
+        self.access_order[key] = len(self.access_order)
 
     def get(self, key):
         """
-            Retrieves an item from the cache dictionary
+        Retrieve an item from the cache by key.
         """
         if key is None or key not in self.cache_data:
             return None
-        item = self.cache_data.pop(key)
-        self.cache_data[key] = item
-        return item
+
+        self.usage_frequency[key] += 1
+        self.access_order[key] = len(self.access_order)
+        return self.cache_data[key]
+
+    def _evict(self, key):
+        """
+        Helper function to evict a key from the cache.
+        """
+        if key in self.cache_data:
+            print(f"DISCARD: {key}")
+            del self.cache_data[key]
+            del self.usage_frequency[key]
+            del self.access_order[key]
